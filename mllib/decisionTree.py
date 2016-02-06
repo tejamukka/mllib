@@ -78,6 +78,9 @@ class DecisionTree:
       self.walk(self._tree, 0)
 
   def fit(self, data, attributes, target_attr):
+      '''
+        Public method to fit data into a decision tree.
+      '''
       self._attribute_names = attributes
       # convert attributes to integer array
       attr_list = [ i for i in range(len(attributes))]
@@ -119,10 +122,6 @@ class DecisionTree:
               return dct[node]
       return dct
 
-  def get_rules():
-      '''
-        get all the rules as path from root to leaves.
-      '''
 
   def prune(self, dataset, iterations, high):
       '''
