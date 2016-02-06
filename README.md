@@ -18,7 +18,8 @@ for example:
 > python main.py 1 2 data/training_set.csv  data/validation_set.csv data/test_set.csv yes
 
 It will run decision tree classifier on training set and report back the accuracy of 
-**nformation Gain heuristics (  Before & After pruning )
-**Emphasis* Variance Impurity heuristics ( Before & After pruning )
+
+1) Information Gain heuristics (  Before & After pruning )
+2) Variance Impurity heuristics ( Before & After pruning )
 
 to_print will make program to print the tree on console. Sample output is attached as sample_output.txt
