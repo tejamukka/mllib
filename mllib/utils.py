@@ -41,7 +41,7 @@ def variance_impurity(data , target_attr):
 
       # Calculate the entropy of the data for the target attribute
     for freq in val_freq.values():
-      data_entropy *= freq/sum(val_freq.values())
+      data_entropy *= freq/len(data)
 
     return data_entropy
 
@@ -71,7 +71,13 @@ def information_gain(data, attr, target_attr, fitness_func):
     subset_entropy += val_prob* fitness_func(data_subset, target_attr)
 
   # subtract the entropy of the chosen attribute from the entropy of the whole data set
-  return (entropy(data, target_attr) - subset_entropy)
+  return (fitness_func(data, target_attr) - subset_entropy)
+
+def gain_ratio(data, attr, target_attr, fitness_func):
+    #print "information gain " , information_gain(data, attr, target_attr, fitness_func)* 1.0
+    #print "entropy  ", entropy(data, attr)
+    #print "gain ratio ", information_gain(data, attr, target_attr, fitness_func)* 1.0 /(entropy(data, attr) + 0.00001)
+    return information_gain(data, attr, target_attr, fitness_func)* 1.0 / (entropy(data, attr) +0.0001)
 
 def majority_value(data, class_attr):
   """
@@ -81,9 +87,9 @@ def majority_value(data, class_attr):
   val_freq = {}
   for record in data:
       if val_freq.has_key(record[class_attr]):
-          val_freq[class_attr] += 1.0
+          val_freq[record[class_attr]] += 1.0
       else:
-          val_freq[class_attr] = 1.0
+          val_freq[record[class_attr]] = 1.0
 
   max_freq = 0
   max_key = None
