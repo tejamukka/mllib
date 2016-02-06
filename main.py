@@ -14,19 +14,14 @@ def train(training_set, option):
     attributes = data[0]
     target_attr = attributes[-1]
 
-    #print "attributes : ", attributes
-    #print "target attribute ", target_attr
-
     # Decision Tree algorithm starts here
     dt = DecisionTree(option)
     dt.fit(data[1:], attributes, target_attr )
     return dt
-    #print "\n examples accuracy : ", ( dt.validate( data[1:], target_attr) )
 
 def print_stats(dt, to_print, validation_set, test_set):
     if to_print == "yes":
         dt.stats()
-    #dt.accuracy(validation_set)
     dt.accuracy(test_set)
 
 def main():
