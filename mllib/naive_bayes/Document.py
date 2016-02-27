@@ -8,6 +8,7 @@ class Document(object):
     def __init__(self):
         self._name = ""
         self._vocabulary = BagOfWords()
+        self._error = 0
 
     def read_document(self, filename, stopwords=None):
         """ A document is read. It is assumed and parsed to find suitable words and
@@ -19,6 +20,9 @@ class Document(object):
         text = text.lower()
 
         words = re.split("(?:(?:[^a-zA-Z]+')|(?:'[^a-zA-Z]+))|(?:[^a-zA-Z']+)",text)[:-1]
+
+        # only for regression
+        words.append("BIASPUNEET")
         for word in words:
             if stopwords and word in stopwords:
                 continue
@@ -46,3 +50,9 @@ class Document(object):
         """ Returning the words of the document object """
         d = self._vocabulary.BagOfWords()
         return d.keys()
+
+    def setError(self, error):
+        self._error = error
+
+    def getError(self):
+        return self._error
