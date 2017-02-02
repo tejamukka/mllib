@@ -63,6 +63,44 @@ class DecisionTree:
               return 0
       return 0
 
+  def _create_tree(self, dataset, attributes, target_attr, fitness_func):
+    """
+      Returns a new decision tree based on the examples given
+    """
+    dataset = dataset[:]
+    vals = [datarow[target_attr] for datarow in dataset]
+    default = most_freq_attr_val(dataset, target_attr)
+
+    # if the dataset is empty or attributes list is empty, return the default value
+    if not dataset or (len(attributes) - 1) <= 0:
+        return default
+
+    elif vals.count(vals[0]) == len(vals):
+        return vals[0]
+    else:
+        # choose the next best attribute to best classify our data
+        best = self.choose_best_attribute(dataset, attributes, target_attr, fitness_func)
+
+        # create a new node
+        #print "best attribute ",best
+        node = Node(self._attribute_names[best], default)
+        tree = {node:{}}
+
+        # insert newly created node
+        self._inner_nodes.append(tree)
+
+        # create a new decision tree / sub-node for each of the values in the best attribute field
+        for val in get_values(dataset, best):
+            subsetTree = self._create_tree(getAttribute_With_GivenValue(dataset, best, val),
+                    [ attr for attr in attributes if attr != best],
+                    target_attr,
+                    fitness_func )
+
+            # Add the new subtree to empty dictionary object in our new tree/node we just created
+            tree[node][val] = subsetTree
+
+    return tree
+	
   def walk(self, dct, depth):
       if isinstance(dct, dict):
           node = dct.keys()[0]
@@ -75,6 +113,7 @@ class DecisionTree:
               print dct[node],
       else:
           print dct,
+		  
   def print_tree(self):
       self.walk(self._tree, 0)
 
@@ -199,40 +238,4 @@ class DecisionTree:
           print "---------------------------------------------------"
       return (poscount, negcount)
 
-  def _create_tree(self, dataset, attributes, target_attr, fitness_func):
-    """
-      Returns a new decision tree based on the examples given
-    """
-    dataset = dataset[:]
-    vals = [datarow[target_attr] for datarow in dataset]
-    default = most_freq_attr_val(dataset, target_attr)
-
-    # if the dataset is empty or attributes list is empty, return the default value
-    if not dataset or (len(attributes) - 1) <= 0:
-        return default
-
-    elif vals.count(vals[0]) == len(vals):
-        return vals[0]
-    else:
-        # choose the next best attribute to best classify our data
-        best = self.choose_best_attribute(dataset, attributes, target_attr, fitness_func)
-
-        # create a new node
-        #print "best attribute ",best
-        node = Node(self._attribute_names[best], default)
-        tree = {node:{}}
-
-        # insert newly created node
-        self._inner_nodes.append(tree)
-
-        # create a new decision tree / sub-node for each of the values in the best attribute field
-        for val in get_values(dataset, best):
-            subsetTree = self._create_tree(getAttribute_With_GivenValue(dataset, best, val),
-                    [ attr for attr in attributes if attr != best],
-                    target_attr,
-                    fitness_func )
-
-            # Add the new subtree to empty dictionary object in our new tree/node we just created
-            tree[node][val] = subsetTree
-
-    return tree
+  
