@@ -75,7 +75,7 @@ class DecisionTree:
               print dct[node],
       else:
           print dct,
-  def stats(self):
+  def print_tree(self):
       self.walk(self._tree, 0)
 
   def fit(self, data, attributes, target_attr):
@@ -94,7 +94,7 @@ class DecisionTree:
       self._tree = self._create_tree(data, attr_list, index, self.fitness_func)
       #print self._tree
 
-  def choose_attribute(self, data, attributes, class_attr, fitness):
+  def choose_best_attribute(self, data, attributes, class_attr, fitness):
       '''
         Cycles through all the attributes and returns the attribute with the highest
         informaiton gain
@@ -129,7 +129,7 @@ class DecisionTree:
         Post pruning step for decision trees. It prunes / deletes nodes to decrease accuracy on
         training set but increase accuracy on validation set.
       '''
-      opcnt, oncnt = self.accuracy(dataset,0)
+      opcnt, oncnt = self.printAccuracy(dataset,0)
       bestree = copy.deepcopy(self._tree)
       for i in range(iterations):
           m = random.randint(1, high)
@@ -154,7 +154,7 @@ class DecisionTree:
             #print "tree after ", self._tree
 
             # get the accuracy
-            pcnt, ncnt = self.accuracy(dataset,0)
+            pcnt, ncnt = self.printAccuracy(dataset,0)
             #print "new accuracy ", pcnt*1.0/(pcnt + ncnt)
             if pcnt*1.0/(pcnt + ncnt) > opcnt*1.0 / (opcnt + oncnt):
                 #print "new improvement ", pcnt*1.0/(pcnt + ncnt)
@@ -170,52 +170,52 @@ class DecisionTree:
       '''
         It simply checks decision tree accuracy against test data set.
       '''
-      ncnt = 0
-      pcnt = 0
+      negcount = 0
+      poscount = 0
       index = self._attribute_names.index(target_attr)
-      for record in test_set:
-          if( self.walk_validate(self._tree, record) == record[index]):
-             pcnt+=1
+      for datarow in test_set:
+          if( self.walk_validate(self._tree, datarow) == datarow[index]):
+             poscount+=1
           else:
-             ncnt+=1
-      return (pcnt, ncnt)
+             negcount+=1
+      return (poscount, negcount)
 
-  def accuracy(self, testfilename, toprint=1):
-      data = []
+  def printAccuracy(self, testfilename, toprint=1):
+      dataset = []
       with open(testfilename, 'r') as f:
           for line in f:
-              data.append(re.split(',| |\n',line)[:-1])
+              dataset.append(re.split(',| |\n',line)[:-1])
 
-      attributes = data[0]
+      attributes = dataset[0]
       target_attr = attributes[-1]
 
-      pcnt, ncnt = self.validate(data[1:], target_attr)
+      poscount, negcount = self.validate(dataset[1:], target_attr)
       if toprint:
           print "\n--------------------------------------------------\n"
-          print "TESTING RESULTS on %s" %(testfilename)
-          print "POSITIVE : ", pcnt
-          print "NEGATIVE : ", ncnt
-          print "Accuracy ", pcnt*1.0/(pcnt+ncnt)
+          print "TESTING RESULTS on test dataset:%s" %(testfilename)
+          print "POSITIVE CLASS : ", poscount
+          print "NEGATIVE CLASS: ", negcount
+          print "OverAll Accuracy: ", poscount*1.0/(poscount+negcount)
           print "---------------------------------------------------"
-      return (pcnt, ncnt)
+      return (poscount, negcount)
 
-  def _create_tree(self, data, attributes, target_attr, fitness_func):
+  def _create_tree(self, dataset, attributes, target_attr, fitness_func):
     """
       Returns a new decision tree based on the examples given
     """
-    data = data[:]
-    vals = [record[target_attr] for record in data]
-    default = most_freq_attr_val(data, target_attr)
+    dataset = dataset[:]
+    vals = [datarow[target_attr] for datarow in dataset]
+    default = most_freq_attr_val(dataset, target_attr)
 
     # if the dataset is empty or attributes list is empty, return the default value
-    if not data or (len(attributes) - 1) <= 0:
+    if not dataset or (len(attributes) - 1) <= 0:
         return default
 
     elif vals.count(vals[0]) == len(vals):
         return vals[0]
     else:
         # choose the next best attribute to best classify our data
-        best = self.choose_attribute(data, attributes, target_attr, fitness_func)
+        best = self.choose_best_attribute(dataset, attributes, target_attr, fitness_func)
 
         # create a new node
         #print "best attribute ",best
@@ -226,13 +226,13 @@ class DecisionTree:
         self._inner_nodes.append(tree)
 
         # create a new decision tree / sub-node for each of the values in the best attribute field
-        for val in get_values(data, best):
-            subtree = self._create_tree(getAttribute_With_GivenValue(data, best, val),
+        for val in get_values(dataset, best):
+            subsetTree = self._create_tree(getAttribute_With_GivenValue(dataset, best, val),
                     [ attr for attr in attributes if attr != best],
                     target_attr,
                     fitness_func )
 
             # Add the new subtree to empty dictionary object in our new tree/node we just created
-            tree[node][val] = subtree
+            tree[node][val] = subsetTree
 
     return tree

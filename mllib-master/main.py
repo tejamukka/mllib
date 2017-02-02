@@ -40,32 +40,32 @@ python main.py <L> <K> <training_set> <validation_set> <test_set> <to_print>
     train_set = sys.argv[3]
     validation_set = sys.argv[4]
     test_set = sys.argv[5]
-    to_print = sys.argv[6]
+    print_tree = sys.argv[6]
 
     # train the decisionTree over the training data
-    print "informaiton gain decision tree"
+    print "Statistics of decision tree using information gain to calculate entropy"
     dt1 = train(train_set, DecisionTree.ENTROPY)
-    dt1.accuracy(test_set)
+    dt1.printAccuracy(test_set)
 
-    print "AFTER PRUNING"
+    print "Statistics AFTER PRUNING of decision tree using information gain to calculate entropy"
     dt1.prune(validation_set, val_l, val_k)
-    dt1.accuracy(test_set)
+    dt1.printAccuracy(test_set)
 
 
-    print "variance impurity decision tree"
+    print "Statistics of decision tree using variance impurity to calculate entropy"
     dt2 = train(train_set, DecisionTree.VARIANCE_IMPURITY)
-    dt2.accuracy(test_set)
+    dt2.printAccuracy(test_set)
 
-    print "AFTER PRUNING"
+    print "Statistics AFTER PRUNING of decision tree using variance impurity to calculate entropy"
     dt2.prune(validation_set, val_l, val_k)
-    dt2.accuracy(test_set)
+    dt2.printAccuracy(test_set)
 
-    if to_print == "yes":
-        print "\n Decision tree information gain "
-        dt1.stats()
+    if print_tree == "yes":
+        print "\n Printing the Decision tree using information gain "
+        dt1.print_tree()
 
-        print "\n Decision tree variance impurity "
-        dt2.stats()
+        print "\n Printing the Decision tree using variance impurity "
+        dt2.print_tree()
 
 
 if __name__ == '__main__':
