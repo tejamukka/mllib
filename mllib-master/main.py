@@ -1,71 +1,71 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
+# Reading the arguments from the cmd and decides whether to print the tree or not and also the paths to the various datasets
+ 
 
-from mllib.decisionTree import DecisionTree
+from tree.decisionTree import OptimalDecisionTree
 import sys
 import re
 
-def train(training_set, option):
+def train(training_set, option): # Training using the training set and option is used to decode the heuristic
     data = []
-    with open(training_set,'r') as f:
+    with open(training_set,'r') as f: # Open the files training set 
         for line in f:
-            data.append(re.split(',| |\n',line)[:-1])
+            data.append(re.split(',| |\n',line)[:-1]) # Split with either the new line or , and append all those values 
 
-    attributes = data[0]
-    target_attr = attributes[-1]
+    attributes = data[0]      # Take the first row
+    target_attr = attributes[-1] ## Selecting the class required.
 
     # Decision Tree algorithm starts here
-    dt = DecisionTree(option)
-    dt.fit(data[1:], attributes, target_attr )
-    return dt
+    decisiontree = OptimalDecisionTree(option)
+    decisiontree.fit(data[1:], attributes, target_attr )  # Fit the decision tree using the given attributes
+    return decisiontree
 
-def print_stats(dt, to_print, validation_set, test_set):
-    if to_print == "yes":
-        dt.stats()
-    dt.accuracy(test_set)
+def print_stats(decisiontree, to_print, validation_set, test_set): # This prints the stats for the given decision tree
+    if to_print == "yes": # Looks for the command from the cmd line and prints only if it is yes
+        decisiontree.stats() # gives the stats of the corresponding decision tree
+    decisiontree.accuracy(test_set)
 
 def main():
     if len(sys.argv) != 7:
         print('''
-Invalid input arguments.
-Please specify input as :
+These are not valid input arguments.
+Please re-enter input as :
 python main.py <L> <K> <training_set> <validation_set> <test_set> <to_print>
 ''')
         sys.exit(1)
 
-    # read inputs from command line
+    # reads the arguments  from command line and treats them as the inputs
 
-    val_l = int(sys.argv[1])
-    val_k = int(sys.argv[2])
-    train_set = sys.argv[3]
+    value_l = int(sys.argv[1])
+    value_k = int(sys.argv[2])
+    training_set = sys.argv[3] # Selects the training set 
     validation_set = sys.argv[4]
     test_set = sys.argv[5]
-    print_tree = sys.argv[6]
+    print_tree = sys.argv[6] # decides whether to print 
 
-    # train the decisionTree over the training data
+    # training  the give decision Tree in the training data
     print "Statistics of decision tree using information gain to calculate entropy"
-    dt1 = train(train_set, DecisionTree.ENTROPY)
-    dt1.printAccuracy(test_set)
-
+    decisiontree1 = train(training_set, OptimalDecisionTree.CLASS_ENTROPY)
+    decisiontree1.printAccuracy(test_set)
+    #Pruning and trying to improve the accuracy of the given decision tree
     print "Statistics AFTER PRUNING of decision tree using information gain to calculate entropy"
-    dt1.prune(validation_set, val_l, val_k)
-    dt1.printAccuracy(test_set)
+    decisiontree1.prune(validation_set, value_l, value_k)
+    decisiontree1.printAccuracy(test_set)
 
-
+	# This one uses the second heuristic to build the decision tree 
     print "Statistics of decision tree using variance impurity to calculate entropy"
-    dt2 = train(train_set, DecisionTree.VARIANCE_IMPURITY)
-    dt2.printAccuracy(test_set)
-
+    decisiontree2 = train(training_set, OptimalDecisionTree.VARIANCE_IMPURITY)
+    decisiontree2.printAccuracy(test_set)
+    # This one prunes the second tree and improves the accuracy 
     print "Statistics AFTER PRUNING of decision tree using variance impurity to calculate entropy"
-    dt2.prune(validation_set, val_l, val_k)
-    dt2.printAccuracy(test_set)
+    decisiontree2.prune(validation_set, value_l, value_k)
+    decisiontree2.printAccuracy(test_set)
 
     if print_tree == "yes":
         print "\n Printing the Decision tree using information gain "
-        dt1.print_tree()
+        decisiontree1.print_tree() # Printing the first decision tree
 
         print "\n Printing the Decision tree using variance impurity "
-        dt2.print_tree()
+        decisiontree2.print_tree() # Printing tthe second decision tree 
 
 
 if __name__ == '__main__':
