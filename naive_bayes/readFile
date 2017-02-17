@@ -1,0 +1,168 @@
+from __future__ import division
+import os
+import re
+import time
+
+def spamSectionText(className,data):
+  global sectionSpam
+  sectionSpam = " "
+  pathspam = data
+  #pathspam = 'C:/Users/tejamukka/PycharmProjects/Nb/assignment2/hw2_train/train/spam'
+  #dirham = os.listdir(pathham)
+  dirspam = os.listdir(pathspam)
+  #hamcount=0
+  spamcount =0
+#os.chdir(r'C:/Users/tejamukka/PycharmProjects/Nb')
+ #  for file in dirham:
+ #      hamcount+= 1
+ #      hamFilesPath = pathham  +'/'+file
+ #      f = open(hamFilesPath,'r')
+ #      sectionHam += f.read()
+ # # print sectionHam
+
+  for file in dirspam:
+    spamcount +=1
+    spamFilesPath = pathspam + '/' + file
+    f = open(spamFilesPath, 'r')
+    sectionSpam += f.read()
+  #print sectionSpam
+  return spamcount,sectionSpam
+
+
+def hamSectionText(className,data):
+  global sectionHam
+  sectionHam = " "
+  pathham = 'C:/Users/tejamukka/PycharmProjects/Nb/assignment2/hw2_train/train/ham'
+  dirham = os.listdir(pathham)
+  hamcount=0
+  #os.chdir(r'C:/Users/tejamukka/PycharmProjects/Nb')
+  for file in dirham:
+      hamcount+= 1
+      hamFilesPath = pathham  +'/'+file
+      f = open(hamFilesPath,'r')
+      sectionHam += f.read()
+ # print sectionHam
+
+  return hamcount,sectionHam
+
+
+
+
+def parseText(str):
+    tokenList = re.split(r'\W*',str)
+    wordList = [singleToken.lower() for singleToken in tokenList if len(singleToken) > 2]
+    #print wordList
+    return wordList
+#print "ham words"
+#parseText(sectionHam)
+#print "_----------------------------------------------------------------------------------------------------------------"
+#print "spam words"
+#parseText(sectionSpam)
+
+
+def condProbHam(sectionHam):
+    global totalHamTokenCount
+    totalHamTokenCount = 0
+    hamWordsList = parseText(sectionHam)
+    #print hamWordsList
+    hamWordKeys ={}
+    for word in hamWordsList:
+        if(hamWordKeys.has_key(word)):
+            hamWordKeys[word] += 1.0
+        else:
+            hamWordKeys[word] = 1.0
+    for key in hamWordKeys.keys():
+            #print key, hamWordKeys[key]
+        totalHamTokenCount += hamWordKeys[key] + 1.0
+    hamProbList = []
+    for key in hamWordKeys.keys():
+        tokenSpamProb = (hamWordKeys[key] + 1.0) / totalSpamTokenCount
+      #  print key, tokenSpamProb
+        hamProbList.append(tokenSpamProb)
+    #print hamProbList
+    return hamProbList
+    #return tokenHamProb
+#
+#hamWordsList = parseText(sectionHam)
+# for key in hamWordsList:
+#     condProbHam(key)
+
+def condProbSpam(sectionSpam):
+    global totalSpamTokenCount
+    totalSpamTokenCount = 0
+    spamWordsList = parseText(sectionSpam)
+    #print spamWordsList
+    spamWordKeys ={}
+    for word in spamWordsList:
+        if(spamWordKeys.has_key(word)):
+            spamWordKeys[word] += 1.0
+        else:
+            spamWordKeys[word] = 1.0
+
+    for key in spamWordKeys.keys():
+        #print key, spamWordKeys[key]
+        totalSpamTokenCount += spamWordKeys[key] +1.0
+    spamProbList = []
+    for key in spamWordKeys.keys():
+
+        tokenSpamProb = (spamWordKeys[key] + 1.0) / totalSpamTokenCount
+       # print key, tokenSpamProb
+        spamProbList.append(tokenSpamProb)
+  #  print spamProbList
+    return spamProbList
+#condProbSpam()
+
+#
+# spamWordsList = parseText(sectionSpam)
+# for key in spamWordsList:
+#     condProbSpam(key)
+
+
+def priorHam():
+  Ham = hamSectionText("ham","C:/Users/tejamukka/PycharmProjects/Nb/assignment2/hw2_train/train/ham")
+  hamCount = Ham[0]
+  hamText = Ham[1]
+  #totalCount = Count[2]
+  #priorHamProb = hamCount / totalCount
+  #print priorHamProb
+  return hamCount,hamText
+
+#print priorHam() , "ham"
+
+def priorSpam():
+  spam = spamSectionText("spam","C:/Users/tejamukka/PycharmProjects/Nb/assignment2/hw2_train/train/spam")
+  SpamCount = spam[0]
+  SpamText = spam[1]
+  #totalCount = Count[2]
+  #priorSpamProb = SpamCount / totalCount
+  #print priorSpamProb
+  return SpamCount,SpamText
+
+
+def TrainSpam(spam,spamDataSet):
+    priorInfo = priorSpam()
+    spamCount = priorInfo[0]
+    spamSectionText = priorInfo[1]
+    spamWordsList = parseText(spamSectionText)
+    spamList = condProbSpam(spamSectionText)
+    print "hello"
+    print spamList
+    return spamCount, spamSectionText,spamList
+print"spam started"
+TrainSpam("spam","C:/Users/tejamukka/PycharmProjects/Nb/assignment2/hw2_train/train/spam")
+print "spam ended"
+print "________________________________________________________________________________________________________________________________________________________________________________________"
+
+def TrainHam(ham,hamDataSet):
+    priorInfo = priorHam()
+    hamCount = priorInfo[0]
+    hamSectionText = priorInfo[1]
+    hamWordsList = parseText(hamSectionText)
+    hamList = condProbHam(hamSectionText)
+    #print "ham_hello"
+    print hamList
+    return hamCount, hamSectionText,hamList
+print"ham started"
+TrainHam("ham","C:/Users/tejamukka/PycharmProjects/Nb/assignment2/hw2_train/train/ham")
+print"ham ended"
+
