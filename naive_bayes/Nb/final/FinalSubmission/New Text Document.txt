@@ -1,0 +1,20 @@
+C:\Users\tejamukka\Anaconda2\python.exe C:/Users/tejamukka/PycharmProjects/Nb/NaiveBayesWithStopWords.py
+62265 total words count
+62265 total words count
+325 ham successsfully classified
+23 ham successsfully not classified
+129 spam successsfully classified
+1 spam successsfully not classified
+0.949790794979 total accuracy
+
+
+
+
+C:\Users\tejamukka\Anaconda2\python.exe C:/Users/tejamukka/PycharmProjects/Nb/NaiveBayeswithoutStopwords.py
+49524 total words count
+49524 total words count
+322 ham successsfully classified
+26 ham successsfully not classified
+129 spam successsfully classified
+1 spam successsfully not classified
+0.943514644351 total accuracy
