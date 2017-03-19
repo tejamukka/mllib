@@ -222,8 +222,8 @@ def test(datapath):
 if __name__ == "__main__":
     #stopWords = "C:/Users/tejamukka/PycharmProjects/Nb/assignment2/stopwords.txt"
     #getAllWords("C:/Users/tejamukka/PycharmProjects/Nb/assignment2/hw2_train/train", stopWords)
-    getAllWords("C:/Users/tejamukka/PycharmProjects/Perceptron/assignment3/hw2_train/train")
-    result = test("C:/Users/tejamukka/PycharmProjects/Perceptron/assignment3/hw2_train/train/")
+    getAllWords("C:/Users/tejamukka/PycharmProjects/Perceptron/assignment3/enron4_train/enron4/train")
+    result = test("C:/Users/tejamukka/PycharmProjects/Perceptron/assignment3/enron4_test/enron4/test")
 #    getAllWords("C:/Users/tejamukka/PycharmProjects/Perceptron/assignment3/enron4_train/enron4/train")
  #   result = test("C:/Users/tejamukka/PycharmProjects/Perceptron/assignment3/enron4_test/enron4/test")
 
